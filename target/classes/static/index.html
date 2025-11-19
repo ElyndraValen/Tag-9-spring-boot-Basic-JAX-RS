@@ -1,0 +1,270 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Spring Boot Basic Tag 9 - JAX-RS REST API</title>
+    <link rel="stylesheet" href="/css/style.css">
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>🚀 Spring Boot Basic Tag 9</h1>
+            <h2>JAX-RS in Spring Boot - REST mit Java Standards</h2>
+            <p class="author">Von Franz-Martin, Java-Developer.online</p>
+        </header>
+
+        <section class="intro">
+            <h3>📋 Was ist JAX-RS?</h3>
+            <p>
+                <strong>JAX-RS</strong> = Jakarta RESTful Web Services ist der <strong>Java Standard</strong> für REST APIs.
+            </p>
+            <div class="comparison">
+                <div class="comparison-item">
+                    <h4>Spring MVC</h4>
+                    <p>✅ Spring-spezifisch<br>
+                       ✅ @GetMapping, @PostMapping<br>
+                       ❌ Nur in Spring Boot</p>
+                </div>
+                <div class="comparison-item">
+                    <h4>JAX-RS</h4>
+                    <p>✅ Java/Jakarta Standard<br>
+                       ✅ @GET, @POST, @Path<br>
+                       ✅ Portabel zu allen Java EE Servern</p>
+                </div>
+            </div>
+        </section>
+
+        <section class="endpoints">
+            <h3>📍 Verfügbare JAX-RS Endpoints</h3>
+            
+            <div class="endpoint">
+                <div class="method get">GET</div>
+                <div class="url">/api/persons</div>
+                <div class="description">Alle Personen abrufen</div>
+                <button onclick="getAllPersons()">Testen</button>
+            </div>
+
+            <div class="endpoint">
+                <div class="method get">GET</div>
+                <div class="url">/api/persons/{id}</div>
+                <div class="description">Person nach ID abrufen</div>
+                <input type="number" id="getById" placeholder="ID eingeben" value="1">
+                <button onclick="getPersonById()">Testen</button>
+            </div>
+
+            <div class="endpoint">
+                <div class="method get">GET</div>
+                <div class="url">/api/persons/search?firstname=&lastname=</div>
+                <div class="description">Suche nach Personen</div>
+                <input type="text" id="searchFirstname" placeholder="Vorname">
+                <input type="text" id="searchLastname" placeholder="Nachname">
+                <button onclick="searchPersons()">Testen</button>
+            </div>
+
+            <div class="endpoint">
+                <div class="method post">POST</div>
+                <div class="url">/api/persons</div>
+                <div class="description">Neue Person erstellen</div>
+                <input type="text" id="firstname" placeholder="Vorname" value="John">
+                <input type="text" id="lastname" placeholder="Nachname" value="Doe">
+                <input type="email" id="email" placeholder="Email" value="john.doe@example.com">
+                <button onclick="createPerson()">Testen</button>
+            </div>
+
+            <div class="endpoint">
+                <div class="method put">PUT</div>
+                <div class="url">/api/persons/{id}</div>
+                <div class="description">Person aktualisieren</div>
+                <input type="number" id="updateId" placeholder="ID" value="1">
+                <input type="text" id="updateFirstname" placeholder="Vorname" value="Updated">
+                <input type="text" id="updateLastname" placeholder="Nachname" value="Name">
+                <button onclick="updatePerson()">Testen</button>
+            </div>
+
+            <div class="endpoint">
+                <div class="method delete">DELETE</div>
+                <div class="url">/api/persons/{id}</div>
+                <div class="description">Person löschen</div>
+                <input type="number" id="deleteId" placeholder="ID eingeben" value="5">
+                <button onclick="deletePerson()">Testen</button>
+            </div>
+        </section>
+
+        <section class="response">
+            <h3>📦 Response</h3>
+            <pre id="response">Hier erscheint die Server-Antwort...</pre>
+        </section>
+
+        <section class="features">
+            <h3>🎯 Was du hier lernst</h3>
+            <ul>
+                <li><strong>@Path</strong> - URL-Mapping für REST Endpoints</li>
+                <li><strong>@GET, @POST, @PUT, @DELETE</strong> - HTTP-Methoden</li>
+                <li><strong>@Produces, @Consumes</strong> - Content Negotiation</li>
+                <li><strong>@PathParam</strong> - URL-Parameter (z.B. /persons/{id})</li>
+                <li><strong>@QueryParam</strong> - Query-String-Parameter (z.B. ?firstname=Max)</li>
+                <li><strong>@DefaultValue</strong> - Default-Werte für Parameter</li>
+                <li><strong>Response-Objekte</strong> - HTTP-Status-Codes (200, 201, 404, etc.)</li>
+                <li><strong>ExceptionMapper</strong> - Globales Exception Handling</li>
+            </ul>
+        </section>
+
+        <section class="code-example">
+            <h3>💻 Code-Beispiel: PersonResource</h3>
+            <pre><code>@Component
+@Path("/persons")
+@Produces(MediaType.APPLICATION_JSON)
+@Consumes(MediaType.APPLICATION_JSON)
+public class PersonResource {
+
+    private final PersonService personService;
+
+    public PersonResource(PersonService personService) {
+        this.personService = personService;
+    }
+
+    @GET
+    public List&lt;Person&gt; getAllPersons() {
+        return personService.getAllPersons();
+    }
+
+    @GET
+    @Path("/{id}")
+    public Response getPersonById(@PathParam("id") Long id) {
+        Person person = personService.getPersonById(id);
+        return Response.ok(person).build();
+    }
+
+    @POST
+    public Response createPerson(Person person) {
+        Person created = personService.createPerson(person);
+        return Response
+            .status(Response.Status.CREATED)
+            .entity(created)
+            .build();
+    }
+}</code></pre>
+        </section>
+
+        <footer>
+            <p>🔥 Spring Boot Basic Tag 9 - Keep Coding, Keep Learning!</p>
+            <p>© 2025 Java-Developer.online | Franz-Martin</p>
+        </footer>
+    </div>
+
+    <script>
+        const API_BASE = '/api/persons';
+
+        function displayResponse(data, status) {
+            const responseEl = document.getElementById('response');
+            responseEl.textContent = `HTTP Status: ${status}\n\n` + JSON.stringify(data, null, 2);
+        }
+
+        function displayError(error) {
+            const responseEl = document.getElementById('response');
+            responseEl.textContent = `❌ Error: ${error.message}`;
+        }
+
+        async function getAllPersons() {
+            try {
+                const response = await fetch(API_BASE);
+                const data = await response.json();
+                displayResponse(data, response.status);
+            } catch (error) {
+                displayError(error);
+            }
+        }
+
+        async function getPersonById() {
+            const id = document.getElementById('getById').value;
+            try {
+                const response = await fetch(`${API_BASE}/${id}`);
+                if (response.ok) {
+                    const data = await response.json();
+                    displayResponse(data, response.status);
+                } else {
+                    const error = await response.json();
+                    displayResponse(error, response.status);
+                }
+            } catch (error) {
+                displayError(error);
+            }
+        }
+
+        async function searchPersons() {
+            const firstname = document.getElementById('searchFirstname').value;
+            const lastname = document.getElementById('searchLastname').value;
+            const params = new URLSearchParams();
+            if (firstname) params.append('firstname', firstname);
+            if (lastname) params.append('lastname', lastname);
+            
+            try {
+                const response = await fetch(`${API_BASE}/search?${params}`);
+                const data = await response.json();
+                displayResponse(data, response.status);
+            } catch (error) {
+                displayError(error);
+            }
+        }
+
+        async function createPerson() {
+            const person = {
+                firstname: document.getElementById('firstname').value,
+                lastname: document.getElementById('lastname').value,
+                email: document.getElementById('email').value
+            };
+
+            try {
+                const response = await fetch(API_BASE, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(person)
+                });
+                const data = await response.json();
+                displayResponse(data, response.status);
+            } catch (error) {
+                displayError(error);
+            }
+        }
+
+        async function updatePerson() {
+            const id = document.getElementById('updateId').value;
+            const person = {
+                firstname: document.getElementById('updateFirstname').value,
+                lastname: document.getElementById('updateLastname').value,
+                email: 'updated@example.com'
+            };
+
+            try {
+                const response = await fetch(`${API_BASE}/${id}`, {
+                    method: 'PUT',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(person)
+                });
+                const data = await response.json();
+                displayResponse(data, response.status);
+            } catch (error) {
+                displayError(error);
+            }
+        }
+
+        async function deletePerson() {
+            const id = document.getElementById('deleteId').value;
+            try {
+                const response = await fetch(`${API_BASE}/${id}`, {
+                    method: 'DELETE'
+                });
+                displayResponse({ message: 'Person deleted successfully' }, response.status);
+            } catch (error) {
+                displayError(error);
+            }
+        }
+
+        // Initial load
+        window.onload = () => {
+            getAllPersons();
+        };
+    </script>
+</body>
+</html>
