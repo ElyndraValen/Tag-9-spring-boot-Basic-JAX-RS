@@ -51,7 +51,8 @@ public class PersonService {
      * Neue Person erstellen
      */
     public Person createPerson(Person person) {
-        return personRepository.save(person);
+        Person p=personRepository.save(person);
+        return p;
     }
 
     /**
