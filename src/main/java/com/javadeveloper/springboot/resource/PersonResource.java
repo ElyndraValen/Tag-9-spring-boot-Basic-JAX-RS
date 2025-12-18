@@ -1,12 +1,15 @@
 package com.javadeveloper.springboot.resource;
 
 import com.javadeveloper.springboot.model.Person;
+import com.javadeveloper.springboot.model.PersonList;
 import com.javadeveloper.springboot.service.PersonService;
 import org.springframework.stereotype.Component;
 
 import jakarta.ws.rs.*;
 import jakarta.ws.rs.core.MediaType;
 import jakarta.ws.rs.core.Response;
+import jakarta.xml.bind.annotation.XmlElement;
+import jakarta.xml.bind.annotation.XmlRootElement;
 import java.util.List;
 
 /**
@@ -22,8 +25,8 @@ import java.util.List;
  */
 @Component
 @Path("/persons")
-@Produces(MediaType.APPLICATION_JSON)
-@Consumes(MediaType.APPLICATION_JSON)
+//@Produces(MediaType.APPLICATION_JSON)
+//@Consumes(MediaType.APPLICATION_JSON)
 public class PersonResource {
 
     private final PersonService personService;
@@ -32,15 +35,23 @@ public class PersonResource {
     public PersonResource(PersonService personService) {
         this.personService = personService;
     }
-
+   @GET
+   @Produces({MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML})
+    public PersonList getAllPersons() {
+        return new PersonList(personService.getAllPersons());
+    }
+    
     /**
      * GET /api/persons
      * Alle Personen abrufen
      */
-    @GET
-    public List<Person> getAllPersons() {
-        return personService.getAllPersons();
-    }
+//    @GET
+//    @Produces({MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML})
+//    public List<Person> getAllPersons() {
+//        PersonList pl=new PersonList();
+//        pl.setPersons(personService.getAllPersons());
+//        return pl.getPersons() ;
+//    }
 
     /**
      * GET /api/persons/{id}
